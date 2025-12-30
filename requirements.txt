@@ -1,0 +1,13 @@
+# FastAPI and core dependencies
+fastapi==0.121.1
+uvicorn[standard]==0.38.0
+pydantic==2.12.4
+pydantic-settings==2.12.0
+
+# ASGI server
+python-multipart==0.0.20
+
+# Database
+sqlalchemy[asyncio]==2.0.45
+asyncpg==0.31.0
+alembic==1.17.2
