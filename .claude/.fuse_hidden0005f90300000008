@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(wc -l app/**/*.py app/*.py)",
-      "Bash(cat:*)",
-      "Bash(cd:*)"
-    ]
-  }
-}

@@ -19,8 +19,15 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
 
-    # CORS
-    BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:8000"]
+    # CORS - includes frontend dev servers and mobile app origins
+    BACKEND_CORS_ORIGINS: list[str] = [
+        "http://localhost:3000",
+        "http://localhost:8000",
+        "http://localhost:5173",  # Vite dev server
+        "http://localhost:4173",  # Vite preview
+        "capacitor://localhost",  # iOS Capacitor
+        "http://localhost",       # Android Capacitor
+    ]
 
     # Database
     POSTGRES_HOST: str = "localhost"

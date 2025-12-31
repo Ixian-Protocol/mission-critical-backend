@@ -1,16 +1,24 @@
 """
 Pydantic schemas for API request/response validation.
 """
-from app.schemas.user import (
-    UserCreate,
-    UserUpdate,
-    UserResponse,
-    UserInDB,
+from app.schemas.task import (
+    TaskCreate,
+    TaskUpdate,
+    TaskResponse,
+    TaskTag,
+    RecurrenceType,
+    TaskInSync,
+    SyncRequest,
+    SyncResponse,
 )
 
 __all__ = [
-    "UserCreate",
-    "UserUpdate",
-    "UserResponse",
-    "UserInDB",
+    "TaskCreate",
+    "TaskUpdate",
+    "TaskResponse",
+    "TaskTag",
+    "RecurrenceType",
+    "TaskInSync",
+    "SyncRequest",
+    "SyncResponse",
 ]
