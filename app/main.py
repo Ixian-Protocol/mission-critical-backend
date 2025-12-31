@@ -1,13 +1,16 @@
 """
 Main FastAPI application.
 """
+from contextlib import asynccontextmanager
+import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
-import logging
 
 from app.core.config import get_settings
+from app.scheduler import start_scheduler, stop_scheduler
 from app.core.exceptions import AppException
 from app.core.error_handlers import (
     app_exception_handler,
@@ -30,6 +33,22 @@ logger = logging.getLogger(__name__)
 settings = get_settings()
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan context manager for startup and shutdown events."""
+    # Startup
+    if settings.NTFY_URL:
+        logger.info(f"Starting scheduler with ntfy notifications to {settings.NTFY_URL}")
+        start_scheduler()
+    else:
+        logger.info("NTFY_URL not configured, task reminders disabled")
+
+    yield
+
+    # Shutdown
+    stop_scheduler()
+
+
 def create_application() -> FastAPI:
     """
     Create and configure the FastAPI application.
@@ -45,6 +64,7 @@ def create_application() -> FastAPI:
         docs_url="/docs",
         redoc_url="/redoc",
         openapi_url="/openapi.json",
+        lifespan=lifespan,
     )
 
     # Configure CORS

@@ -11,6 +11,9 @@ dependencies = [
     "sqlalchemy[asyncio]>=2.0.36",
     "asyncpg>=0.30.0",
     "alembic>=1.14.0",
+    # Scheduler & HTTP client
+    "apscheduler>=3.10.0",
+    "httpx>=0.28.0",
 ]
 
 [dependency-groups]

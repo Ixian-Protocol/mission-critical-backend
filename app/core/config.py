@@ -36,6 +36,11 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str = "postgres"
     POSTGRES_DB: str = "app"
 
+    # ntfy Notifications (optional)
+    NTFY_URL: str | None = None  # e.g., "https://ntfy.sh" or "http://ntfy:80"
+    NTFY_TOKEN: str | None = None  # Optional: for authenticated ntfy servers
+    NTFY_TOPIC: str = "ixian-mission-critical"
+
     @computed_field
     @property
     def DATABASE_URL(self) -> str:
