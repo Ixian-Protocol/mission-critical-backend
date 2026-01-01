@@ -11,9 +11,9 @@ class Settings(BaseSettings):
 
     # API Settings
     API_V1_PREFIX: str = "/api/v1"
-    PROJECT_NAME: str = "FastAPI Production Template"
+    PROJECT_NAME: str = "Ixian Protocol: Mission Critical Backend"
     VERSION: str = "1.0.0"
-    DESCRIPTION: str = "Production-ready FastAPI application with clean architecture"
+    DESCRIPTION: str = "Backend API for Ixian Protocol's Mission Critical application."
 
     # Environment
     ENVIRONMENT: str = "development"
@@ -27,6 +27,7 @@ class Settings(BaseSettings):
         "http://localhost:4173",  # Vite preview
         "capacitor://localhost",  # iOS Capacitor
         "http://localhost",       # Android Capacitor
+        "https://localhost",      # Android Capacitor secure
     ]
 
     # Database
