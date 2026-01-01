@@ -13,7 +13,6 @@ from app.schemas.task import (
     SyncResponse,
     TaskCreate,
     TaskResponse,
-    TaskTag,
     TaskUpdate,
 )
 
@@ -88,7 +87,7 @@ async def sync_tasks(
     description="Get all non-deleted tasks with optional filtering.",
 )
 async def get_tasks(
-    tag: TaskTag | None = Query(None, description="Filter by tag"),
+    tag: str | None = Query(None, description="Filter by tag name"),
     completed: bool | None = Query(None, description="Filter by completion status"),
     important: bool | None = Query(None, description="Filter by importance"),
     db: AsyncSession = Depends(get_db),

@@ -11,7 +11,6 @@ from app.schemas.task import (
     SyncResponse,
     TaskCreate,
     TaskResponse,
-    TaskTag,
     TaskUpdate,
 )
 from app.services.sync_service import SyncService
@@ -33,7 +32,7 @@ class TaskController:
 
     async def get_tasks(
         self,
-        tag: TaskTag | None = None,
+        tag: str | None = None,
         completed: bool | None = None,
         important: bool | None = None,
     ) -> list[TaskResponse]:

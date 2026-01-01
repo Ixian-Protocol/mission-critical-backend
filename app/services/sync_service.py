@@ -90,7 +90,7 @@ class SyncService:
             description=client_task.description,
             completed=client_task.completed,
             important=client_task.important,
-            tag=client_task.tag.value,
+            tag=client_task.tag,
             due_at=client_task.due_at,
             recurrence=client_task.recurrence.value,
             recurrence_alt=client_task.recurrence_alt,
@@ -107,7 +107,7 @@ class SyncService:
         server_task.description = client_task.description
         server_task.completed = client_task.completed
         server_task.important = client_task.important
-        server_task.tag = client_task.tag.value
+        server_task.tag = client_task.tag
         server_task.due_at = client_task.due_at
         server_task.recurrence = client_task.recurrence.value
         server_task.recurrence_alt = client_task.recurrence_alt

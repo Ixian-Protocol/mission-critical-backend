@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
+from app.models.tag import Tag
 from app.models.task import Task, now_ms
 
 
@@ -60,8 +61,9 @@ async def db_session(test_engine) -> AsyncGenerator[AsyncSession, None]:
     )
 
     async with async_session() as session:
-        # Clean up tasks table before each test
+        # Clean up tables before each test
         await session.execute(text("DELETE FROM tasks"))
+        await session.execute(text("DELETE FROM tags"))
         await session.commit()
 
         yield session
@@ -214,3 +216,119 @@ async def deleted_task(db_session: AsyncSession) -> Task:
     await db_session.flush()
     await db_session.refresh(task)
     return task
+
+
+# ============================================================================
+# Tag Fixtures
+# ============================================================================
+
+
+@pytest.fixture
+def sample_tag_data() -> dict[str, Any]:
+    """Return sample tag data for creating tags."""
+    current_time = now_ms()
+    return {
+        "name": "Test Tag",
+        "color": "#14b8a6",
+        "is_default": False,
+        "created_at": current_time,
+        "updated_at": current_time,
+    }
+
+
+@pytest.fixture
+async def existing_tag(db_session: AsyncSession) -> Tag:
+    """Create an existing tag in the database for testing."""
+    current_time = now_ms()
+    tag = Tag(
+        name="Existing Tag",
+        color="#3b82f6",
+        is_default=False,
+        created_at=current_time,
+        updated_at=current_time,
+    )
+    db_session.add(tag)
+    await db_session.flush()
+    await db_session.refresh(tag)
+    return tag
+
+
+@pytest.fixture
+async def default_tag(db_session: AsyncSession) -> Tag:
+    """Create a default tag that cannot be deleted."""
+    current_time = now_ms()
+    tag = Tag(
+        name="General",
+        color="#6b7280",
+        is_default=True,
+        created_at=current_time,
+        updated_at=current_time,
+    )
+    db_session.add(tag)
+    await db_session.flush()
+    await db_session.refresh(tag)
+    return tag
+
+
+@pytest.fixture
+async def multiple_tags(db_session: AsyncSession) -> list[Tag]:
+    """Create multiple tags for testing list operations."""
+    current_time = now_ms()
+    tags = [
+        Tag(
+            name="Work",
+            color="#ef4444",
+            is_default=True,
+            created_at=current_time,
+            updated_at=current_time,
+        ),
+        Tag(
+            name="Personal",
+            color="#22c55e",
+            is_default=True,
+            created_at=current_time - 1000,
+            updated_at=current_time - 1000,
+        ),
+        Tag(
+            name="Research",
+            color="#a855f7",
+            is_default=False,
+            created_at=current_time - 2000,
+            updated_at=current_time - 2000,
+        ),
+        Tag(
+            name="Design",
+            color="#f97316",
+            is_default=False,
+            created_at=current_time - 3000,
+            updated_at=current_time - 3000,
+        ),
+    ]
+
+    for tag in tags:
+        db_session.add(tag)
+
+    await db_session.flush()
+
+    for tag in tags:
+        await db_session.refresh(tag)
+
+    return tags
+
+
+@pytest.fixture
+async def deleted_tag(db_session: AsyncSession) -> Tag:
+    """Create a soft-deleted tag for testing."""
+    current_time = now_ms()
+    tag = Tag(
+        name="Deleted Tag",
+        color="#94a3b8",
+        is_default=False,
+        created_at=current_time - 10000,
+        updated_at=current_time,
+        deleted_at=current_time,
+    )
+    db_session.add(tag)
+    await db_session.flush()
+    await db_session.refresh(tag)
+    return tag

@@ -44,8 +44,8 @@ class Task(Base):
     completed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     important: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
-    # Categorization
-    tag: Mapped[str] = mapped_column(String(20), nullable=False, default="General")
+    # Categorization - references tag name (dynamic, user-configurable)
+    tag: Mapped[str] = mapped_column(String(50), nullable=False, default="General")
 
     # Due date (Unix timestamp in milliseconds)
     due_at: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
@@ -62,11 +62,7 @@ class Task(Base):
     deleted_at: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
 
     __table_args__ = (
-        # Check constraints for enum-like columns
-        CheckConstraint(
-            "tag IN ('General', 'Work', 'Personal', 'Research', 'Design')",
-            name="valid_tag",
-        ),
+        # Check constraint for recurrence enum
         CheckConstraint(
             "recurrence IN ('none', 'daily', 'weekly', 'monthly')",
             name="valid_recurrence",

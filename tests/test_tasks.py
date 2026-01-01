@@ -138,15 +138,17 @@ def describe_tasks_api():
             assert response.status_code == 422
 
         @pytest.mark.asyncio
-        async def it_returns_422_for_invalid_tag(client: AsyncClient):
+        async def it_accepts_custom_tag_names(client: AsyncClient):
+            # Tags are now dynamic - any string up to 50 chars is valid
             # Act
             response = await client.post(
                 "/api/v1/tasks",
-                json={"text": "Task", "tag": "InvalidTag"}
+                json={"text": "Task", "tag": "CustomTag"}
             )
 
             # Assert
-            assert response.status_code == 422
+            assert response.status_code == 201
+            assert response.json()["tag"] == "CustomTag"
 
         @pytest.mark.asyncio
         async def it_returns_422_for_invalid_recurrence(client: AsyncClient):
@@ -425,17 +427,19 @@ def describe_tasks_api():
             assert response.status_code == 422
 
         @pytest.mark.asyncio
-        async def it_returns_422_for_invalid_tag(
+        async def it_accepts_custom_tag_on_update(
             client: AsyncClient, existing_task: Task
         ):
+            # Tags are now dynamic - any string up to 50 chars is valid
             # Act
             response = await client.patch(
                 f"/api/v1/tasks/{existing_task.id}",
-                json={"tag": "InvalidTag"}
+                json={"tag": "CustomTag"}
             )
 
             # Assert
-            assert response.status_code == 422
+            assert response.status_code == 200
+            assert response.json()["tag"] == "CustomTag"
 
         @pytest.mark.asyncio
         async def it_allows_empty_update(
@@ -803,15 +807,16 @@ def describe_sync_api():
             assert len(list_response.json()) == 5
 
         @pytest.mark.asyncio
-        async def it_returns_422_for_invalid_task_in_sync(client: AsyncClient):
-            # Arrange - task with invalid tag
+        async def it_accepts_custom_tag_in_sync(client: AsyncClient):
+            # Tags are now dynamic - any string up to 50 chars is valid
+            task_id = str(uuid.uuid4())
             client_task = {
-                "id": str(uuid.uuid4()),
+                "id": task_id,
                 "text": "Task",
                 "description": "",
                 "completed": False,
                 "important": False,
-                "tag": "InvalidTag",  # Invalid
+                "tag": "CustomTag",  # Custom tag is now valid
                 "due_at": None,
                 "recurrence": "none",
                 "recurrence_alt": False,
@@ -825,7 +830,12 @@ def describe_sync_api():
             response = await client.post("/api/v1/sync", json=sync_request)
 
             # Assert
-            assert response.status_code == 422
+            assert response.status_code == 200
+
+            # Verify task was created with custom tag
+            get_response = await client.get(f"/api/v1/tasks/{task_id}")
+            assert get_response.status_code == 200
+            assert get_response.json()["tag"] == "CustomTag"
 
         @pytest.mark.asyncio
         async def it_returns_422_for_missing_required_fields(client: AsyncClient):

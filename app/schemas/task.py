@@ -7,16 +7,6 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class TaskTag(str, Enum):
-    """Valid task tags."""
-
-    GENERAL = "General"
-    WORK = "Work"
-    PERSONAL = "Personal"
-    RESEARCH = "Research"
-    DESIGN = "Design"
-
-
 class RecurrenceType(str, Enum):
     """Valid recurrence types."""
 
@@ -33,7 +23,7 @@ class TaskBase(BaseModel):
     description: str = Field(default="", max_length=2000)
     completed: bool = False
     important: bool = False
-    tag: TaskTag = TaskTag.GENERAL
+    tag: str = Field(default="General", max_length=50)  # Now dynamic - references tag name
     due_at: int | None = None  # Unix timestamp (ms)
     recurrence: RecurrenceType = RecurrenceType.NONE
     recurrence_alt: bool = False
@@ -52,7 +42,7 @@ class TaskUpdate(BaseModel):
     description: str | None = Field(default=None, max_length=2000)
     completed: bool | None = None
     important: bool | None = None
-    tag: TaskTag | None = None
+    tag: str | None = Field(default=None, max_length=50)
     due_at: int | None = None
     recurrence: RecurrenceType | None = None
     recurrence_alt: bool | None = None

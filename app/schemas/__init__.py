@@ -1,11 +1,15 @@
 """
 Pydantic schemas for API request/response validation.
 """
+from app.schemas.tag import (
+    TagCreate,
+    TagUpdate,
+    TagResponse,
+)
 from app.schemas.task import (
     TaskCreate,
     TaskUpdate,
     TaskResponse,
-    TaskTag,
     RecurrenceType,
     TaskInSync,
     SyncRequest,
@@ -13,10 +17,12 @@ from app.schemas.task import (
 )
 
 __all__ = [
+    "TagCreate",
+    "TagUpdate",
+    "TagResponse",
     "TaskCreate",
     "TaskUpdate",
     "TaskResponse",
-    "TaskTag",
     "RecurrenceType",
     "TaskInSync",
     "SyncRequest",

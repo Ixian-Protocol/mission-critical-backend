@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.task import Task, now_ms
-from app.schemas.task import TaskCreate, TaskTag, TaskUpdate
+from app.schemas.task import TaskCreate, TaskUpdate
 
 
 class TaskService:
@@ -21,7 +21,7 @@ class TaskService:
 
     async def get_all(
         self,
-        tag: TaskTag | None = None,
+        tag: str | None = None,
         completed: bool | None = None,
         important: bool | None = None,
         include_deleted: bool = False,
@@ -30,7 +30,7 @@ class TaskService:
         Get all tasks with optional filters.
 
         Args:
-            tag: Filter by tag
+            tag: Filter by tag name
             completed: Filter by completion status
             important: Filter by importance
             include_deleted: If True, include soft-deleted tasks
@@ -41,7 +41,7 @@ class TaskService:
             query = query.where(Task.deleted_at.is_(None))
 
         if tag is not None:
-            query = query.where(Task.tag == tag.value)
+            query = query.where(Task.tag == tag)
 
         if completed is not None:
             query = query.where(Task.completed == completed)
@@ -62,7 +62,7 @@ class TaskService:
             description=task_in.description,
             completed=task_in.completed,
             important=task_in.important,
-            tag=task_in.tag.value,
+            tag=task_in.tag,
             due_at=task_in.due_at,
             recurrence=task_in.recurrence.value,
             recurrence_alt=task_in.recurrence_alt,
@@ -86,9 +86,7 @@ class TaskService:
 
         update_data = task_in.model_dump(exclude_unset=True)
         for field, value in update_data.items():
-            if field == "tag" and value is not None:
-                value = value.value
-            elif field == "recurrence" and value is not None:
+            if field == "recurrence" and value is not None:
                 value = value.value
             setattr(task, field, value)
 
