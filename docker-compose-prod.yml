@@ -20,7 +20,7 @@ services:
 
   # FastAPI Application
   api:
-    image: git.purecambo.org/corrinai/ixian-protocol/mission-critical-backend
+    image: git.purecambo.org/corrinai/ixian-protocol/mission-critical-backend:1.0
     container_name: mission-critical
     restart: unless-stopped
     ports:
@@ -41,9 +41,6 @@ services:
         condition: service_healthy
       ntfy:
         condition: service_healthy
-    volumes:
-      # Mount app code for development (hot reload)
-      - ./app:/app/app:ro
 
   ntfy:
     image: binwiederhier/ntfy
