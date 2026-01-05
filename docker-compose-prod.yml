@@ -34,7 +34,7 @@ services:
       - ENVIRONMENT=${ENVIRONMENT:-development}
       - DEBUG=${DEBUG:-true}
       # ntfy notifications
-      - NTFY_URL=http://ntfy:80
+      - NTFY_URL=https://ntfy.purecambo.org
       - NTFY_TOPIC=ixian-mission-critical
     depends_on:
       db:
