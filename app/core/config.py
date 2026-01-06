@@ -1,9 +1,12 @@
 """
 Application configuration management.
 """
-from pydantic_settings import BaseSettings
-from pydantic import computed_field
+import json
 from functools import lru_cache
+from typing import Any
+
+from pydantic import computed_field, field_validator
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -29,6 +32,18 @@ class Settings(BaseSettings):
         "http://localhost",       # Android Capacitor
         "https://localhost",      # Android Capacitor secure
     ]
+
+    @field_validator("BACKEND_CORS_ORIGINS", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, v: Any) -> list[str]:
+        """Parse CORS origins from string or list."""
+        if isinstance(v, str):
+            # Handle JSON array string: '["http://localhost:3000","http://localhost:8000"]'
+            if v.startswith("["):
+                return json.loads(v)
+            # Handle comma-separated string: "http://localhost:3000,http://localhost:8000"
+            return [origin.strip() for origin in v.split(",") if origin.strip()]
+        return v
 
     # Database
     POSTGRES_HOST: str = "localhost"
