@@ -2,7 +2,7 @@ services:
   # PostgreSQL Database
   db:
     image: postgres:16-alpine
-    container_name: fastapi_db
+    container_name: mission_critical_db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
@@ -19,18 +19,18 @@ services:
       retries: 5
 
   # Adminer for Development
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
+  # adminer:
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
 
   # FastAPI Application
   api:
     build:
       context: .
       dockerfile: dockerfile
-    container_name: fastapi_api
+    container_name: mission_critical_api
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -53,25 +53,25 @@ services:
     volumes:
       # Mount app code for development (hot reload)
       - ./app:/app/app:ro
-
-  ntfy:
-    image: binwiederhier/ntfy
-    ports:
-      - "8082:80" # optional: adapt host port as needed
-    container_name: ntfy
-    command:
-      - serve
-    environment:
-      - TZ=UTC # optional: set desired timezone
-    healthcheck:
-      # optional: remember to adapt the host:port to your environment
-      test: [ "CMD-SHELL", "wget -q --tries=1 http://localhost:80/v1/health -O - | grep -Eo '\"healthy\"\\s*:\\s*true' || exit 1" ]
-      interval: 60s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    restart: unless-stopped
-    init: true # needed, if healthcheck is used. Prevents zombie processes
+  # If needed
+  # ntfy:
+  #   image: binwiederhier/ntfy
+  #   ports:
+  #     - "8082:80" # optional: adapt host port as needed
+  #   container_name: mission_critical_ntfy
+  #   command:
+  #     - serve
+  #   environment:
+  #     - TZ=UTC # optional: set desired timezone
+  #   healthcheck:
+  #     # optional: remember to adapt the host:port to your environment
+  #     test: [ "CMD-SHELL", "wget -q --tries=1 http://localhost:80/v1/health -O - | grep -Eo '\"healthy\"\\s*:\\s*true' || exit 1" ]
+  #     interval: 60s
+  #     timeout: 10s
+  #     retries: 3
+  #     start_period: 40s
+  #   restart: unless-stopped
+  #   init: true # needed, if healthcheck is used. Prevents zombie processes
 
 volumes:
   postgres_data:
